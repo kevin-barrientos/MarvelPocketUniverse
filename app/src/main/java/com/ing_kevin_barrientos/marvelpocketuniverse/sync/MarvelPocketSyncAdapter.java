@@ -62,7 +62,7 @@ public class MarvelPocketSyncAdapter extends AbstractThreadedSyncAdapter {
      *
      * @param context The context used to access the account service
      */
-    private static void syncImmediately(Context context) {
+    public static void syncImmediately(Context context) {
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
@@ -164,6 +164,8 @@ public class MarvelPocketSyncAdapter extends AbstractThreadedSyncAdapter {
             characterValues.put(MarvelContract.CharacterEntry.COLUMN_MODIFIED_DATE, characterDto.getModified());
             characterValues.put(MarvelContract.CharacterEntry.COLUMN_THUMBNAIL_PATH, characterDto.getThumbnail().getPath());
             characterValues.put(MarvelContract.CharacterEntry.COLUMN_THUMBNAIL_EXTENSION, characterDto.getThumbnail().getExtension());
+            characterValues.put(MarvelContract.CharacterEntry.COLUMN_COMICS, characterDto.getComics().getReturned());
+            characterValues.put(MarvelContract.CharacterEntry.COLUMN_IMAGE_FULLSIZE, characterDto.getThumbnail().getImageUrl(MarvelImage.Size.FULLSIZE));
 
             cVVector.add(characterValues);
         }

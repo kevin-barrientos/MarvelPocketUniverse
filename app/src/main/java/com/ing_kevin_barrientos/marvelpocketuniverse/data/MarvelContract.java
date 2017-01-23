@@ -39,6 +39,8 @@ public class MarvelContract {
         public static final String COLUMN_MODIFIED_DATE = "modified_date";
         public static final String COLUMN_THUMBNAIL_PATH = "thumbnail_path";
         public static final String COLUMN_THUMBNAIL_EXTENSION = "thumbnail_extension";
+        public static final String COLUMN_COMICS = "comics";
+        public static final String COLUMN_IMAGE_FULLSIZE = "image_fullsize";
 
         public static Uri buildCharacterUri(String marvelsId) {
             return CONTENT_URI.buildUpon().appendPath(marvelsId).build();

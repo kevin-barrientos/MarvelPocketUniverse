@@ -12,10 +12,13 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ing_kevin_barrientos.marvelpocketuniverse.R;
 import com.ing_kevin_barrientos.marvelpocketuniverse.data.MarvelContract;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,8 +44,8 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
             CHARACTER_NAME = 1,
             CHARACTER_DESCRIPTION = 2,
             CHARACTER_MODIFIED = 3,
-            CHARACTER_THUMBNAIL_PATH = 4,
-            CHARACTER_THUMBNAIL_EXT = 5;
+            CHARACTER_IMAGEURL = 4,
+            CHARACTER_COMICS = 5;
     /**
      * Loaders ID, each loader must have a unique id
      */
@@ -55,14 +58,16 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
             MarvelContract.CharacterEntry.COLUMN_NAME,
             MarvelContract.CharacterEntry.COLUMN_DESCRIPTION,
             MarvelContract.CharacterEntry.COLUMN_MODIFIED_DATE,
-            MarvelContract.CharacterEntry.COLUMN_THUMBNAIL_PATH,
-            MarvelContract.CharacterEntry.COLUMN_THUMBNAIL_EXTENSION,
+            MarvelContract.CharacterEntry.COLUMN_IMAGE_FULLSIZE,
+            MarvelContract.CharacterEntry.COLUMN_COMICS,
     };
     /**
      * Character's id
      */
     private String mCharacterId;
 
+    @BindView(R.id.image)
+    ImageView mImageView;
     @BindView(R.id.character_detail)
     TextView mDescriptionTextView;
     @BindView(R.id.character_comics)
@@ -131,6 +136,9 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
         }
 
         mDescriptionTextView.setText(data.getString(CHARACTER_DESCRIPTION));
-        mComicsTextView.setText(getActivity().getString(R.string.number_of_comics, 5));
+        mComicsTextView.setText(getActivity().getString(R.string.number_of_comics, data.getInt(CHARACTER_COMICS)));
+
+        //set up image view
+        ImageLoader.getInstance().displayImage(data.getString(CHARACTER_IMAGEURL), mImageView);
     }
 }

@@ -6,14 +6,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ing_kevin_barrientos.marvelpocketuniverse.R;
 import com.ing_kevin_barrientos.marvelpocketuniverse.data.MarvelContract;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.CharacterViewHolder> {
 
-    private final Cursor mCharactersCursos;
+    private Cursor mCharactersCursos;
     private Context mContext;
     private OnClickListener mListener;
 
@@ -34,7 +36,7 @@ class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Character
     @Override
     public void onBindViewHolder(CharacterViewHolder holder, int position) {
         // Move the mCharactersCursos to the position of the item to be displayed
-        if (!mCharactersCursos.moveToPosition(position))
+        if (mCharactersCursos == null || !mCharactersCursos.moveToPosition(position))
             return; // fail if returned null
 
         holder.bind(mCharactersCursos);
@@ -42,29 +44,34 @@ class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Character
 
     @Override
     public int getItemCount() {
-        return mCharactersCursos.getCount();
+        return mCharactersCursos == null ? 0 : mCharactersCursos.getCount();
+    }
+
+    public void swapCursor(Cursor data) {
+        if(mCharactersCursos != null)
+            mCharactersCursos.close();
+        mCharactersCursos = data;
     }
 
     /**
      * Adapters Vieholder inner class. Used to cached the ui elements
      */
     class CharacterViewHolder extends RecyclerView.ViewHolder{
-        private TextView descriptionTextView;
+        private ImageView imageView;
         private TextView nameTextView;
 
         CharacterViewHolder(View itemView) {
             super(itemView);
-            this.descriptionTextView = (TextView) itemView.findViewById(R.id.description);
+            this.imageView = (ImageView) itemView.findViewById(R.id.image);
             this.nameTextView = (TextView) itemView.findViewById(R.id.name);;
         }
 
         void bind(Cursor item){
             final String id = item.getString(CharacterListActivity.CHARACTER_MARVELS_ID);
             String name = item.getString(CharacterListActivity.CHARACTER_NAME);
-            String description = item.getString(CharacterListActivity.CHARACTER_DESCRIPTION);
 
             this.nameTextView.setText(name);
-            this.descriptionTextView.setText(description);
+            ImageLoader.getInstance().displayImage(item.getString(CharacterListActivity.CHARACTER_IMAGEURL), this.imageView);
 
             this.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

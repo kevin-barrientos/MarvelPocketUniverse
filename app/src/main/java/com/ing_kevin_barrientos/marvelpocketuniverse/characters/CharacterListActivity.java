@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.ing_kevin_barrientos.marvelpocketuniverse.R;
 
@@ -27,7 +26,7 @@ import com.ing_kevin_barrientos.marvelpocketuniverse.sync.MarvelPocketSyncAdapte
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class CharacterListActivity extends AppCompatActivity implements CharactersAdapter.OnClickListener {
+public class CharacterListActivity extends AppCompatActivity implements CharactersAdapter.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Characters columns to be projected on a query
@@ -35,7 +34,7 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
     private static final String[] CHARACTERS_COLUMNS = {
             MarvelContract.CharacterEntry.COLUMN_MARVELS_ID,
             MarvelContract.CharacterEntry.COLUMN_NAME,
-            MarvelContract.CharacterEntry.COLUMN_DESCRIPTION,
+            MarvelContract.CharacterEntry.COLUMN_IMAGE_FULLSIZE,
     };
 
     /**
@@ -44,14 +43,14 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
      */
     public static final int CHARACTER_MARVELS_ID = 0,
             CHARACTER_NAME = 1,
-            CHARACTER_DESCRIPTION = 2;
+            CHARACTER_IMAGEURL = 2;
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
     private boolean mTwoPane;
-    private Cursor mCharactersCurrsor;
+    private CharactersAdapter mCharactersAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +74,13 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
         }
 
         MarvelPocketSyncAdapter.initializeSyncAdapter(this);
+
+        getSupportLoaderManager().initLoader(1, null, this);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        mCharactersCurrsor = getContentResolver().query(MarvelContract.CharacterEntry.CONTENT_URI, CHARACTERS_COLUMNS, null, null, null);
-        recyclerView.setAdapter(new CharactersAdapter(this, mCharactersCurrsor, this));
+        mCharactersAdapter = new CharactersAdapter(this, null, this);
+        recyclerView.setAdapter(mCharactersAdapter);
     }
 
     @Override
@@ -99,5 +100,26 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
 
             startActivity(intent);
         }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(this, MarvelContract.CharacterEntry.CONTENT_URI, CHARACTERS_COLUMNS, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(data != null && data.getCount() > 0){
+            mCharactersAdapter.swapCursor(data);
+            mCharactersAdapter.notifyDataSetChanged();
+        }else{
+            MarvelPocketSyncAdapter.syncImmediately(this);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mCharactersAdapter.swapCursor(null);
+        mCharactersAdapter.notifyDataSetChanged();
     }
 }
