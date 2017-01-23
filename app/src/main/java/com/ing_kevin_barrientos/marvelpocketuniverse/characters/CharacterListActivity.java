@@ -2,11 +2,13 @@ package com.ing_kevin_barrientos.marvelpocketuniverse.characters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +16,8 @@ import android.widget.TextView;
 
 import com.ing_kevin_barrientos.marvelpocketuniverse.R;
 
-import com.ing_kevin_barrientos.marvelpocketuniverse.characters.dummy.DummyContent;
-
-import java.util.List;
+import com.ing_kevin_barrientos.marvelpocketuniverse.data.MarvelContract;
+import com.ing_kevin_barrientos.marvelpocketuniverse.sync.MarvelPocketSyncAdapter;
 
 /**
  * An activity representing a list of characters. This activity
@@ -26,13 +27,31 @@ import java.util.List;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class CharacterListActivity extends AppCompatActivity {
+public class CharacterListActivity extends AppCompatActivity implements CharactersAdapter.OnClickListener {
+
+    /**
+     * Characters columns to be projected on a query
+     */
+    private static final String[] CHARACTERS_COLUMNS = {
+            MarvelContract.CharacterEntry.COLUMN_MARVELS_ID,
+            MarvelContract.CharacterEntry.COLUMN_NAME,
+            MarvelContract.CharacterEntry.COLUMN_DESCRIPTION,
+    };
+
+    /**
+     * Corresponding index for each column
+     * @see #CHARACTERS_COLUMNS
+     */
+    public static final int CHARACTER_MARVELS_ID = 0,
+            CHARACTER_NAME = 1,
+            CHARACTER_DESCRIPTION = 2;
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
     private boolean mTwoPane;
+    private Cursor mCharactersCurrsor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,78 +73,31 @@ public class CharacterListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+
+        MarvelPocketSyncAdapter.initializeSyncAdapter(this);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+        mCharactersCurrsor = getContentResolver().query(MarvelContract.CharacterEntry.CONTENT_URI, CHARACTERS_COLUMNS, null, null, null);
+        recyclerView.setAdapter(new CharactersAdapter(this, mCharactersCurrsor, this));
     }
 
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+    @Override
+    public void onItemClick(String id) {
+        if (mTwoPane) {
+            Bundle arguments = new Bundle();
+            arguments.putString(CharacterDetailFragment.ARG_ITEM_ID, id);
 
-        private final List<DummyContent.DummyItem> mValues;
+            CharacterDetailFragment fragment = new CharacterDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.character_detail_container, fragment)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, CharacterDetailActivity.class);
+            intent.putExtra(CharacterDetailFragment.ARG_ITEM_ID, id);
 
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
-            mValues = items;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.character_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
-
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(CharacterDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        CharacterDetailFragment fragment = new CharacterDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.character_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, CharacterDetailActivity.class);
-                        intent.putExtra(CharacterDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
-                        context.startActivity(intent);
-                    }
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            public final TextView mIdView;
-            public final TextView mContentView;
-            public DummyContent.DummyItem mItem;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);
-            }
-
-            @Override
-            public String toString() {
-                return super.toString() + " '" + mContentView.getText() + "'";
-            }
+            startActivity(intent);
         }
     }
 }
