@@ -11,4 +11,13 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_invalid_credentials">The credentials provided does not match any of our records.</string>
+
+    <!-- Characters releated -->
+    <string name="title_character_list">characters</string>
+    <string name="title_character_detail">character Detail</string>
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">ing_kevin_barrientos.com</string>
+    <string name="content_authority">com.ing_kevin_barrientos.app</string>
+    <string name="number_of_comics">Comics: %1$d</string>
 </resources>

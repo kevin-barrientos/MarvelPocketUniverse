@@ -3,6 +3,7 @@ package com.ing_kevin_barrientos.marvelpocketuniverse;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -29,6 +30,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ing_kevin_barrientos.marvelpocketuniverse.characters.CharacterListActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -244,7 +247,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if (success) {
                 // TODO: 22/01/17 Change activity
-                finish();
+                startActivity(new Intent(LoginActivity.this, CharacterListActivity.class));
             }else{
                 Snackbar.make(mLoginFormView, R.string.error_invalid_credentials, Snackbar.LENGTH_SHORT).show();
             }
