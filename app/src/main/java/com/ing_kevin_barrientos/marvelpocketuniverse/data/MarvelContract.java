@@ -41,6 +41,7 @@ public class MarvelContract {
         public static final String COLUMN_THUMBNAIL_EXTENSION = "thumbnail_extension";
         public static final String COLUMN_COMICS = "comics";
         public static final String COLUMN_IMAGE_FULLSIZE = "image_fullsize";
+        public static final String COLUMN_FAVORITE = "favorito";
 
         public static Uri buildCharacterUri(String marvelsId) {
             return CONTENT_URI.buildUpon().appendPath(marvelsId).build();

@@ -75,7 +75,7 @@ public class MarvelProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             // "characters"
             case CHARACTERS: {
-                retCursor = CharactersQueries.getAll(mOpenHelper, projection);
+                retCursor = CharactersQueries.getAll(mOpenHelper, projection, selection, selectionArgs);
                 break;
             }
             //"character"
@@ -144,6 +144,9 @@ public class MarvelProvider extends ContentProvider {
             case CHARACTERS:
                 rowsUpdated = db.update(MarvelContract.CharacterEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
+            case CHARACTER:
+                rowsUpdated = db.update(MarvelContract.CharacterEntry.TABLE_NAME, values, MarvelContract.CharacterEntry.COLUMN_MARVELS_ID + " = ?", new String[]{uri.getPathSegments().get(1)});
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -166,7 +169,12 @@ public class MarvelProvider extends ContentProvider {
                 try {
                     for (ContentValues value : values) {
                         long _id = db.insert(MarvelContract.CharacterEntry.TABLE_NAME, null, value);
-                        if (_id != -1) returnCount++;
+                        if (_id != -1)
+                            returnCount++;
+                        else
+                            db.update(MarvelContract.CharacterEntry.TABLE_NAME, value,
+                                    MarvelContract.CharacterEntry.COLUMN_MARVELS_ID + " = ? ",
+                                    new String[]{value.getAsString(MarvelContract.CharacterEntry.COLUMN_MARVELS_ID)});
                     }
                     db.setTransactionSuccessful();
                 } finally {
