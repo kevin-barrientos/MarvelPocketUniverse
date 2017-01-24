@@ -11,6 +11,9 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.ing_kevin_barrientos.marvelpocketuniverse.R;
@@ -51,6 +54,10 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
      */
     private boolean mTwoPane;
     private CharactersAdapter mCharactersAdapter;
+    private static final String FAVORITES_KEY = "favorites";
+
+    //flag to avoid loops
+    private boolean isFirstime = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +91,27 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.characters_list_filters, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.show_all){
+            getSupportLoaderManager().restartLoader(1, null, this);
+        }else if(id == R.id.show_favorites){
+            Bundle args = new Bundle();
+            args.putBoolean(FAVORITES_KEY, true);
+            getSupportLoaderManager().restartLoader(1, args, this);
+        }
+
+        return true;
+    }
+
+    @Override
     public void onItemClick(String id) {
         if (mTwoPane) {
             Bundle arguments = new Bundle();
@@ -104,17 +132,22 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this, MarvelContract.CharacterEntry.CONTENT_URI, CHARACTERS_COLUMNS, null, null, null);
+        if(args == null)
+            return new CursorLoader(this, MarvelContract.CharacterEntry.CONTENT_URI, CHARACTERS_COLUMNS, null, null, null);
+        return new CursorLoader(this, MarvelContract.CharacterEntry.CONTENT_URI, CHARACTERS_COLUMNS, MarvelContract.CharacterEntry.COLUMN_FAVORITE + " = 1", null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data != null && data.getCount() > 0){
+
+        if(data != null && (data.getCount() > 0 || !isFirstime)){
             mCharactersAdapter.swapCursor(data);
             mCharactersAdapter.notifyDataSetChanged();
-        }else{
+        }else if(isFirstime){
             MarvelPocketSyncAdapter.syncImmediately(this);
         }
+
+        isFirstime = false;
     }
 
     @Override

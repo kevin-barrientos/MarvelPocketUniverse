@@ -12,11 +12,12 @@ public class CharactersQueries {
      * Gets the first 100 records
      * @param mOpenHelper database helper
      * @param projection columns to retrieve
-     * @return a cursor
+     * @param selection
+     *@param selectionArgs @return a cursor
      */
-    public static Cursor getAll(MarvelDbHelper mOpenHelper, String[] projection) {
+    public static Cursor getAll(MarvelDbHelper mOpenHelper, String[] projection, String selection, String[] selectionArgs) {
         return mOpenHelper.getReadableDatabase().query(MarvelContract.CharacterEntry.TABLE_NAME,
-                projection, null, null, null, null, null, "100");
+                projection, selection, selectionArgs, null, null, null, "100");
     }
 
     /**

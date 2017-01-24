@@ -75,7 +75,7 @@ public class MarvelProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             // "characters"
             case CHARACTERS: {
-                retCursor = CharactersQueries.getAll(mOpenHelper, projection);
+                retCursor = CharactersQueries.getAll(mOpenHelper, projection, selection, selectionArgs);
                 break;
             }
             //"character"

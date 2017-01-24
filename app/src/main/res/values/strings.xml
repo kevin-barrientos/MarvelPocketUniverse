@@ -20,4 +20,8 @@
     <string name="sync_account_type">ing_kevin_barrientos.com</string>
     <string name="content_authority">com.ing_kevin_barrientos.app</string>
     <string name="number_of_comics">Comics: %1$d</string>
+
+    <!-- Menu related -->
+    <string name="show_favorites">Show favorites</string>
+    <string name="show_all">Show all</string>
 </resources>
