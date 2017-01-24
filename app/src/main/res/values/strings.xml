@@ -24,4 +24,8 @@
     <!-- Menu related -->
     <string name="show_favorites">Show favorites</string>
     <string name="show_all">Show all</string>
+    <string name="save">Save</string>
+    <string name="add_note">Add a note</string>
+    <string name="cancel">cancel</string>
+    <string name="saved">Saved</string>
 </resources>

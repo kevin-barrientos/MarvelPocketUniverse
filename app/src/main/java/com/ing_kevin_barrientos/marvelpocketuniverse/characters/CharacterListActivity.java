@@ -29,7 +29,9 @@ import com.ing_kevin_barrientos.marvelpocketuniverse.sync.MarvelPocketSyncAdapte
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class CharacterListActivity extends AppCompatActivity implements CharactersAdapter.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class CharacterListActivity extends AppCompatActivity implements CharactersAdapter.OnClickListener,
+        LoaderManager.LoaderCallbacks<Cursor>,
+        NotesDialogFragment.OnSaveClickListener{
 
     /**
      * Characters columns to be projected on a query
@@ -120,7 +122,7 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
             CharacterDetailFragment fragment = new CharacterDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.character_detail_container, fragment)
+                    .replace(R.id.character_detail_container, fragment, CharacterDetailFragment.class.getSimpleName())
                     .commit();
         } else {
             Intent intent = new Intent(this, CharacterDetailActivity.class);
@@ -154,5 +156,11 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
     public void onLoaderReset(Loader<Cursor> loader) {
         mCharactersAdapter.swapCursor(null);
         mCharactersAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSaveClicked(String note) {
+        CharacterDetailFragment fragment = (CharacterDetailFragment) getSupportFragmentManager().findFragmentByTag(CharacterDetailFragment.class.getSimpleName());
+        fragment.saveNote(note);
     }
 }

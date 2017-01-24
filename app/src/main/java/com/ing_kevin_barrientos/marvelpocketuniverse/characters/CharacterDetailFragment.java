@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ing_kevin_barrientos.marvelpocketuniverse.R;
 import com.ing_kevin_barrientos.marvelpocketuniverse.data.MarvelContract;
@@ -26,6 +27,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A fragment representing a single character detail screen.
@@ -50,7 +52,8 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
             CHARACTER_MODIFIED = 3,
             CHARACTER_IMAGEURL = 4,
             CHARACTER_COMICS = 5,
-            CHARACTER_FAVORITE = 6;
+            CHARACTER_FAVORITE = 6,
+            CHARACTER_NOTES = 7;
     /**
      * Loaders ID, each loader must have a unique id
      */
@@ -66,6 +69,7 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
             MarvelContract.CharacterEntry.COLUMN_IMAGE_FULLSIZE,
             MarvelContract.CharacterEntry.COLUMN_COMICS,
             MarvelContract.CharacterEntry.COLUMN_FAVORITE,
+            MarvelContract.CharacterEntry.COLUMN_NOTE,
     };
     @BindView(R.id.image)
     ImageView mImageView;
@@ -73,6 +77,9 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
     TextView mDescriptionTextView;
     @BindView(R.id.character_comics)
     TextView mComicsTextView;
+    @BindView(R.id.character_notes)
+    TextView mNotesTextView;
+
     /**
      * Character's id
      */
@@ -146,6 +153,11 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
         new UpdateCharacterStatus().execute(mCharacterId, mIsFavorite ? "1" : "0");
     }
 
+    @OnClick(R.id.character_notes)
+    public void onClick(){
+        NotesDialogFragment.newInstance(mNotesTextView.getText().toString()).show(getFragmentManager(), NotesDialogFragment.class.getSimpleName());
+    }
+
     private void setUpView(Cursor data) {
         Activity activity = this.getActivity();
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -158,10 +170,12 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
 
         mDescriptionTextView.setText(data.getString(CHARACTER_DESCRIPTION));
         mComicsTextView.setText(getActivity().getString(R.string.number_of_comics, data.getInt(CHARACTER_COMICS)));
+        mNotesTextView.setText(data.getString(CHARACTER_NOTES));
 
         //set up image view
         ImageLoader.getInstance().displayImage(data.getString(CHARACTER_IMAGEURL), mImageView);
 
+        // Update Fab drawable
         mIsFavorite = data.getInt(CHARACTER_FAVORITE) == 1;
         toogleFabStar(mIsFavorite);
     }
@@ -178,8 +192,17 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
     }
 
     /**
+     * Executes {@link UpdateNote}
+     * @param note any string
+     */
+    public void saveNote(String note) {
+        new UpdateNote().execute(mCharacterId, note);
+    }
+
+    /**
      * Updates characters status. The required params are: [marvels_id, status].
-     * If the update is succesfull it will change the FAB drawable on return.
+     * If it was mark as favorite, it will trigger a dialog to enter an
+     * optional note.
      */
     class UpdateCharacterStatus extends AsyncTask<String, String, Boolean>{
         @Override
@@ -192,6 +215,41 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
             int updatedRows = getActivity().getContentResolver().update(MarvelContract.CharacterEntry.buildCharacterUri(marvels_id), values, null, null);
 
             return updatedRows == 1;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            if(result && mIsFavorite){
+                NotesDialogFragment.newInstance().show(getFragmentManager(), NotesDialogFragment.class.getSimpleName());
+            }
+        }
+    }
+
+    /**
+     * Updates the note field. The required params are: [marvels_id, note]
+     */
+    class UpdateNote extends AsyncTask<String, String, Boolean>{
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            String marvels_id = params[0];
+            String note = params[1];
+
+            ContentValues values = new ContentValues(1);
+            values.put(MarvelContract.CharacterEntry.COLUMN_NOTE, note);
+            int updatedRows = getActivity().getContentResolver().update(MarvelContract.CharacterEntry.buildCharacterUri(marvels_id), values, null, null);
+
+            return updatedRows == 1;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            if(result)
+                Toast.makeText(getActivity(), R.string.saved, Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -18,7 +18,7 @@ import com.ing_kevin_barrientos.marvelpocketuniverse.R;
  * item details are presented side-by-side with a list of items
  * in a {@link CharacterListActivity}.
  */
-public class CharacterDetailActivity extends AppCompatActivity {
+public class CharacterDetailActivity extends AppCompatActivity implements NotesDialogFragment.OnSaveClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ public class CharacterDetailActivity extends AppCompatActivity {
             CharacterDetailFragment fragment = new CharacterDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.character_detail_container, fragment)
+                    .add(R.id.character_detail_container, fragment, CharacterDetailFragment.class.getSimpleName())
                     .commit();
         }
     }
@@ -70,5 +70,12 @@ public class CharacterDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveClicked(String note) {
+        CharacterDetailFragment fragment = (CharacterDetailFragment) getSupportFragmentManager().findFragmentByTag(CharacterDetailFragment.class.getSimpleName());
+
+        fragment.saveNote(note);
     }
 }
