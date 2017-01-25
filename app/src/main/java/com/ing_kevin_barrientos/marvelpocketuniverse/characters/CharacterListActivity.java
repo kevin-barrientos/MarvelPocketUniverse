@@ -9,6 +9,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -70,10 +71,6 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        View recyclerView = findViewById(R.id.character_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
-
         if (findViewById(R.id.character_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
@@ -81,6 +78,10 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+
+        View recyclerView = findViewById(R.id.character_list);
+        assert recyclerView != null;
+        setupRecyclerView((RecyclerView) recyclerView);
 
         MarvelPocketSyncAdapter.initializeSyncAdapter(this);
 
@@ -90,6 +91,9 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         mCharactersAdapter = new CharactersAdapter(this, null, this);
         recyclerView.setAdapter(mCharactersAdapter);
+
+        if(!mTwoPane)
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
     }
 
     @Override
