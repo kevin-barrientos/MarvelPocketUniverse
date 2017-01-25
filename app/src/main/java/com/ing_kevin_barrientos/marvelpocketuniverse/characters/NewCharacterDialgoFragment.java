@@ -17,10 +17,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * Created by kevin on 24/01/17.
- */
-
 public class NewCharacterDialgoFragment extends DialogFragment implements DialogInterface.OnClickListener {
 
 
@@ -30,6 +26,7 @@ public class NewCharacterDialgoFragment extends DialogFragment implements Dialog
     EditText mDescriptionEditText;
     @BindView(R.id.comics)
     EditText mNumberOfCommicsEditText;
+    OnNewCharacterDialogClickedListener mListener;
 
     public static NewCharacterDialgoFragment newInstance() {
         return new NewCharacterDialgoFragment();
@@ -55,6 +52,10 @@ public class NewCharacterDialgoFragment extends DialogFragment implements Dialog
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if(context instanceof OnNewCharacterDialogClickedListener)
+            mListener = (OnNewCharacterDialogClickedListener) context;
+        else
+            throw new ClassCastException("Activity must implmente OnNewCharacterDialogClickedListener interface");
     }
 
     @Override
@@ -62,7 +63,10 @@ public class NewCharacterDialgoFragment extends DialogFragment implements Dialog
         if(Dialog.BUTTON_NEGATIVE == which)
             return;
 
-        // TODO: 24/01/17 save photo or copy selected file
+        mListener.onNewCharacterSavedClicked(mNameEditText.getText().toString(),
+                mDescriptionEditText.getText().toString(),
+                Integer.valueOf(mNumberOfCommicsEditText.getText().toString()),
+                null);
     }
 
     @OnClick(R.id.take_photo)
@@ -73,5 +77,9 @@ public class NewCharacterDialgoFragment extends DialogFragment implements Dialog
     @OnClick(R.id.select_file)
     public void onSelectFileoButtonClicked(){
 
+    }
+
+    public interface OnNewCharacterDialogClickedListener{
+        void onNewCharacterSavedClicked(String name, String description, int comics, Object image);
     }
 }

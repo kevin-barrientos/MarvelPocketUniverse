@@ -44,10 +44,7 @@ public class MarvelProvider extends ContentProvider {
         return matcher;
     }
 
-    /*
-        Students: We've coded this for you.  We just create a new WeatherDbHelper for later use
-        here.
-     */
+
     @Override
     public boolean onCreate() {
         mOpenHelper = new MarvelDbHelper(getContext());
@@ -75,7 +72,7 @@ public class MarvelProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             // "characters"
             case CHARACTERS: {
-                retCursor = CharactersQueries.getAll(mOpenHelper, projection, selection, selectionArgs);
+                retCursor = CharactersQueries.getAll(mOpenHelper, projection, selection, selectionArgs, sortOrder);
                 break;
             }
             //"character"
@@ -100,12 +97,19 @@ public class MarvelProvider extends ContentProvider {
         Uri returnUri;
 
         switch (match) {
-            // TODO: 22/01/17 Add end point to insert a favorite character
+            case CHARACTERS:
+                long id = db.insert(MarvelContract.CharacterEntry.TABLE_NAME, null, values);
+                returnUri = id == -1 ? null : MarvelContract.CharacterEntry.buildCharacterUri(id);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-//        getContext().getContentResolver().notifyChange(uri, null);
-//        return returnUri;
+
+        assert getContext() != null;
+
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return returnUri;
     }
 
     @Override
@@ -145,7 +149,7 @@ public class MarvelProvider extends ContentProvider {
                 rowsUpdated = db.update(MarvelContract.CharacterEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             case CHARACTER:
-                rowsUpdated = db.update(MarvelContract.CharacterEntry.TABLE_NAME, values, MarvelContract.CharacterEntry.COLUMN_MARVELS_ID + " = ?", new String[]{uri.getPathSegments().get(1)});
+                rowsUpdated = db.update(MarvelContract.CharacterEntry.TABLE_NAME, values, MarvelContract.CharacterEntry._ID + " = ?", new String[]{uri.getPathSegments().get(1)});
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

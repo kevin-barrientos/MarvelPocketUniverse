@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MarvelDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 7;
 
     private static final String DATABASE_NAME = "marvelspocket.db";
 
@@ -22,7 +22,7 @@ public class MarvelDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         final String SQL_CREATE_CHARACTERS_TABLE = "CREATE TABLE " + MarvelContract.CharacterEntry.TABLE_NAME + " (" +
                 MarvelContract.CharacterEntry._ID + " INTEGER PRIMARY KEY," +
-                MarvelContract.CharacterEntry.COLUMN_MARVELS_ID + " TEXT UNIQUE NOT NULL, " +
+                MarvelContract.CharacterEntry.COLUMN_MARVELS_ID + " TEXT UNIQUE, " +
                 MarvelContract.CharacterEntry.COLUMN_NAME + " TEXT NOT NULL, " +
                 MarvelContract.CharacterEntry.COLUMN_DESCRIPTION + " TEXT, " +
                 MarvelContract.CharacterEntry.COLUMN_MODIFIED_DATE + " TEXT, " +
@@ -31,7 +31,8 @@ public class MarvelDbHelper extends SQLiteOpenHelper {
                 MarvelContract.CharacterEntry.COLUMN_COMICS + " INTEGER DEFAULT 0, " +
                 MarvelContract.CharacterEntry.COLUMN_IMAGE_FULLSIZE + " TEXT, " +
                 MarvelContract.CharacterEntry.COLUMN_FAVORITE + " INTEGER DEFAULT 0," +
-                MarvelContract.CharacterEntry.COLUMN_NOTE + " TEXT" +
+                MarvelContract.CharacterEntry.COLUMN_NOTE + " TEXT, " +
+                MarvelContract.CharacterEntry.COLUMN_ORIGIN + " INTEGER DEFAULT 0" +
                 " );";
 
         sqLiteDatabase.execSQL(SQL_CREATE_CHARACTERS_TABLE);
