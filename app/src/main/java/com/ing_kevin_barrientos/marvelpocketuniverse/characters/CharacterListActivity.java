@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -21,6 +22,10 @@ import com.ing_kevin_barrientos.marvelpocketuniverse.R;
 
 import com.ing_kevin_barrientos.marvelpocketuniverse.data.MarvelContract;
 import com.ing_kevin_barrientos.marvelpocketuniverse.sync.MarvelPocketSyncAdapter;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * An activity representing a list of characters. This activity
@@ -66,6 +71,8 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_character_list);
+
+        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -166,5 +173,11 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
     public void onSaveClicked(String note) {
         CharacterDetailFragment fragment = (CharacterDetailFragment) getSupportFragmentManager().findFragmentByTag(CharacterDetailFragment.class.getSimpleName());
         fragment.saveNote(note);
+    }
+
+    @OnClick(R.id.create_character_fab)
+    public void onCreateCharacterFabClicked(){
+        DialogFragment dialog = NewCharacterDialgoFragment.newInstance();
+        dialog.show(getSupportFragmentManager(), NewCharacterDialgoFragment.class.getSimpleName());
     }
 }
