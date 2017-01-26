@@ -34,4 +34,5 @@
     <string name="create_a_new_character">Create a new character</string>
     <string name="character_saved">Character saved</string>
     <string name="error_character_not_saved">There was an error while saving the character.</string>
+    <string name="error_no_camera_found">There is no camera install.</string>
 </resources>

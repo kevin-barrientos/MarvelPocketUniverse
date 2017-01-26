@@ -3,6 +3,7 @@ package com.ing_kevin_barrientos.marvelpocketuniverse.characters;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -197,8 +198,8 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
     }
 
     @Override
-    public void onNewCharacterSavedClicked(String name, String description, int comics, Object image) {
-        new SaveCharacterAsync().execute(name, description, String.valueOf(comics), "");
+    public void onNewCharacterSavedClicked(String name, String description, int comics, Uri image) {
+        new SaveCharacterAsync().execute(name, description, String.valueOf(comics), image.toString());
     }
 
     private class SaveCharacterAsync extends AsyncTask<String, Integer, Boolean> {
