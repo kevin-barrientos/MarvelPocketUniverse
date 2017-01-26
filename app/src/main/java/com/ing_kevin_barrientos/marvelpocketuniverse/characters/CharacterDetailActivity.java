@@ -2,12 +2,9 @@ package com.ing_kevin_barrientos.marvelpocketuniverse.characters;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.ing_kevin_barrientos.marvelpocketuniverse.R;
@@ -46,8 +43,8 @@ public class CharacterDetailActivity extends AppCompatActivity implements NotesD
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(CharacterDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(CharacterDetailFragment.ARG_ITEM_ID));
+            arguments.putLong(CharacterDetailFragment.ARG_ITEM_ID,
+                    getIntent().getLongExtra(CharacterDetailFragment.ARG_ITEM_ID, 0));
             CharacterDetailFragment fragment = new CharacterDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

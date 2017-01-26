@@ -83,7 +83,7 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
     /**
      * Character's id
      */
-    private String mCharacterId;
+    private long mCharacterId;
     private FloatingActionButton mMarkAsFavoritFab;
 
     // Determine if the character is mark as favorite
@@ -101,7 +101,7 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            mCharacterId = getArguments().getString(ARG_ITEM_ID);
+            mCharacterId = getArguments().getLong(ARG_ITEM_ID);
         }
     }
 
@@ -150,7 +150,7 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
     @Override
     public void onClick(View v) {
         mIsFavorite = !mIsFavorite;
-        new UpdateCharacterStatus().execute(mCharacterId, mIsFavorite ? "1" : "0");
+        new UpdateCharacterStatus().execute(String.valueOf(mCharacterId), mIsFavorite ? "1" : "0");
     }
 
     @OnClick(R.id.character_notes)
@@ -196,7 +196,7 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
      * @param note any string
      */
     public void saveNote(String note) {
-        new UpdateNote().execute(mCharacterId, note);
+        new UpdateNote().execute(String.valueOf(mCharacterId), note);
     }
 
     /**
@@ -207,12 +207,12 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
     class UpdateCharacterStatus extends AsyncTask<String, String, Boolean>{
         @Override
         protected Boolean doInBackground(String... params) {
-            String marvels_id = params[0];
+            long id = Long.valueOf(params[0]);
             String favorite = params[1];
 
             ContentValues values = new ContentValues(1);
             values.put(MarvelContract.CharacterEntry.COLUMN_FAVORITE, favorite);
-            int updatedRows = getActivity().getContentResolver().update(MarvelContract.CharacterEntry.buildCharacterUri(marvels_id), values, null, null);
+            int updatedRows = getActivity().getContentResolver().update(MarvelContract.CharacterEntry.buildCharacterUri(id), values, null, null);
 
             return updatedRows == 1;
         }
@@ -234,12 +234,12 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
 
         @Override
         protected Boolean doInBackground(String... params) {
-            String marvels_id = params[0];
+            long id = Long.valueOf(params[0]);
             String note = params[1];
 
             ContentValues values = new ContentValues(1);
             values.put(MarvelContract.CharacterEntry.COLUMN_NOTE, note);
-            int updatedRows = getActivity().getContentResolver().update(MarvelContract.CharacterEntry.buildCharacterUri(marvels_id), values, null, null);
+            int updatedRows = getActivity().getContentResolver().update(MarvelContract.CharacterEntry.buildCharacterUri(id), values, null, null);
 
             return updatedRows == 1;
         }

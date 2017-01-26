@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
      * TODO: 22/01/17 remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:Abc123**", "bar@example.com:Abc123**"
+            "ing.kevin.b.c@gmail.com:Abc123**", "bar@example.com:Abc123**"
     };
 
     /**
