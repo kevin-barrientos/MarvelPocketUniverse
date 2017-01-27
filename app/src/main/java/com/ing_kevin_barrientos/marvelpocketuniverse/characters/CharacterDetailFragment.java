@@ -14,6 +14,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -158,6 +159,11 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
         NotesDialogFragment.newInstance(mNotesTextView.getText().toString()).show(getFragmentManager(), NotesDialogFragment.class.getSimpleName());
     }
 
+    @OnClick(R.id.add_note)
+    public void onAddNoteButtonClicked(){
+        NotesDialogFragment.newInstance(mNotesTextView.getText().toString()).show(getFragmentManager(), NotesDialogFragment.class.getSimpleName());
+    }
+
     private void setUpView(Cursor data) {
         Activity activity = this.getActivity();
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -168,8 +174,10 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
             appBarLayout.setTitle(data.getString(CHARACTER_NAME));
         }
 
-        mDescriptionTextView.setText(data.getString(CHARACTER_DESCRIPTION));
-        mComicsTextView.setText(getActivity().getString(R.string.number_of_comics, data.getInt(CHARACTER_COMICS)));
+        String description = data.getString(CHARACTER_DESCRIPTION);
+
+        mDescriptionTextView.setText("".compareTo(description) == 0 ? Html.fromHtml(getString(R.string.not_available)) : description);
+        mComicsTextView.setText(Html.fromHtml(getString(R.string.number_of_comics, data.getInt(CHARACTER_COMICS))));
         mNotesTextView.setText(data.getString(CHARACTER_NOTES));
 
         //set up image view
