@@ -35,4 +35,5 @@
     <string name="character_saved">Character saved</string>
     <string name="error_character_not_saved">There was an error while saving the character.</string>
     <string name="error_no_camera_found">There is no camera install.</string>
+    <string name="show_my_heros">Show my heros</string>
 </resources>
