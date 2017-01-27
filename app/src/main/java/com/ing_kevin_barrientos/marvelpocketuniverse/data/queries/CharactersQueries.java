@@ -13,11 +13,12 @@ public class CharactersQueries {
      * @param mOpenHelper database helper
      * @param projection columns to retrieve
      * @param selection
-     *@param selectionArgs @return a cursor
+     * @param selectionArgs @return a cursor
+     * @param sortOrder
      */
-    public static Cursor getAll(MarvelDbHelper mOpenHelper, String[] projection, String selection, String[] selectionArgs) {
+    public static Cursor getAll(MarvelDbHelper mOpenHelper, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         return mOpenHelper.getReadableDatabase().query(MarvelContract.CharacterEntry.TABLE_NAME,
-                projection, selection, selectionArgs, null, null, null, "100");
+                projection, selection, selectionArgs, null, null, sortOrder, "100");
     }
 
     /**
@@ -29,6 +30,6 @@ public class CharactersQueries {
      */
     public static Cursor find(MarvelDbHelper mOpenHelper, String id, String[] projection) {
         return mOpenHelper.getReadableDatabase().query(MarvelContract.CharacterEntry.TABLE_NAME,
-                projection, MarvelContract.CharacterEntry.COLUMN_MARVELS_ID + " = ? ", new String[]{id}, null, null, null, "1");
+                projection, MarvelContract.CharacterEntry._ID + " = ? ", new String[]{id}, null, null, null, "1");
     }
 }

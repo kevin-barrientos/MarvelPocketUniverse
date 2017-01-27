@@ -43,9 +43,10 @@ public class MarvelContract {
         public static final String COLUMN_IMAGE_FULLSIZE = "image_fullsize";
         public static final String COLUMN_FAVORITE = "favorito";
         public static final String COLUMN_NOTE = "personal_note";
+        public static final String COLUMN_ORIGIN = "origin"; // If the character was downloaded from API then it's orgin will be 0, if ti was created by the user, it will be 1;
 
-        public static Uri buildCharacterUri(String marvelsId) {
-            return CONTENT_URI.buildUpon().appendPath(marvelsId).build();
+        public static Uri buildCharacterUri(long databaseId) {
+            return Uri.withAppendedPath(CONTENT_URI, String.valueOf(databaseId));
         }
     }
 }

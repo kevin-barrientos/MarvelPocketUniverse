@@ -19,13 +19,23 @@
     <!-- SyncAdapter related -->
     <string name="sync_account_type">ing_kevin_barrientos.com</string>
     <string name="content_authority">com.ing_kevin_barrientos.app</string>
-    <string name="number_of_comics">Comics: %1$d</string>
+    <string name="number_of_comics">&lt;b>Comics:&lt;/b> %1$d</string>
 
     <!-- Menu related -->
     <string name="show_favorites">Show favorites</string>
     <string name="show_all">Show all</string>
     <string name="save">Save</string>
     <string name="add_note">Add a note</string>
-    <string name="cancel">cancel</string>
+    <string name="cancel">@android:string/cancel</string>
     <string name="saved">Saved</string>
+    <string name="prompt_character_name">Character\'s name</string>
+    <string name="prompt_character_description">Character\'s description</string>
+    <string name="prompt_character_comics">Number of comics</string>
+    <string name="create_a_new_character">Create a new character</string>
+    <string name="character_saved">Character saved</string>
+    <string name="error_character_not_saved">There was an error while saving the character.</string>
+    <string name="error_no_camera_found">There is no camera install.</string>
+    <string name="show_my_heros">Show my heroes</string>
+    <string name="my_notes">My notes:</string>
+    <string name="not_available">&lt;i>not available&lt;/i></string>
 </resources>

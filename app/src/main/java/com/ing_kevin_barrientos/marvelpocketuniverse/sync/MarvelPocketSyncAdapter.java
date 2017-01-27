@@ -176,7 +176,10 @@ public class MarvelPocketSyncAdapter extends AbstractThreadedSyncAdapter {
             cVVector.toArray(cvArray);
 
             // delete old data so we don't build up an endless history
-            getContext().getContentResolver().delete(MarvelContract.CharacterEntry.CONTENT_URI, MarvelContract.CharacterEntry.COLUMN_FAVORITE + " = 0 ", null);
+            // delete only apis characters, not marked as favorite
+            getContext().getContentResolver().delete(MarvelContract.CharacterEntry.CONTENT_URI,
+                    MarvelContract.CharacterEntry.COLUMN_FAVORITE + " = 0 AND " +
+                    MarvelContract.CharacterEntry.COLUMN_ORIGIN + " = 0 ", null);
 
             // insert new characters
             getContext().getContentResolver().bulkInsert(MarvelContract.CharacterEntry.CONTENT_URI, cvArray);

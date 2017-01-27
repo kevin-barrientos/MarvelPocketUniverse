@@ -14,6 +14,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,7 +84,7 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
     /**
      * Character's id
      */
-    private String mCharacterId;
+    private long mCharacterId;
     private FloatingActionButton mMarkAsFavoritFab;
 
     // Determine if the character is mark as favorite
@@ -101,7 +102,7 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            mCharacterId = getArguments().getString(ARG_ITEM_ID);
+            mCharacterId = getArguments().getLong(ARG_ITEM_ID);
         }
     }
 
@@ -150,11 +151,16 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
     @Override
     public void onClick(View v) {
         mIsFavorite = !mIsFavorite;
-        new UpdateCharacterStatus().execute(mCharacterId, mIsFavorite ? "1" : "0");
+        new UpdateCharacterStatus().execute(String.valueOf(mCharacterId), mIsFavorite ? "1" : "0");
     }
 
     @OnClick(R.id.character_notes)
     public void onClick(){
+        NotesDialogFragment.newInstance(mNotesTextView.getText().toString()).show(getFragmentManager(), NotesDialogFragment.class.getSimpleName());
+    }
+
+    @OnClick(R.id.add_note)
+    public void onAddNoteButtonClicked(){
         NotesDialogFragment.newInstance(mNotesTextView.getText().toString()).show(getFragmentManager(), NotesDialogFragment.class.getSimpleName());
     }
 
@@ -168,8 +174,10 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
             appBarLayout.setTitle(data.getString(CHARACTER_NAME));
         }
 
-        mDescriptionTextView.setText(data.getString(CHARACTER_DESCRIPTION));
-        mComicsTextView.setText(getActivity().getString(R.string.number_of_comics, data.getInt(CHARACTER_COMICS)));
+        String description = data.getString(CHARACTER_DESCRIPTION);
+
+        mDescriptionTextView.setText("".compareTo(description) == 0 ? Html.fromHtml(getString(R.string.not_available)) : description);
+        mComicsTextView.setText(Html.fromHtml(getString(R.string.number_of_comics, data.getInt(CHARACTER_COMICS))));
         mNotesTextView.setText(data.getString(CHARACTER_NOTES));
 
         //set up image view
@@ -196,7 +204,7 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
      * @param note any string
      */
     public void saveNote(String note) {
-        new UpdateNote().execute(mCharacterId, note);
+        new UpdateNote().execute(String.valueOf(mCharacterId), note);
     }
 
     /**
@@ -207,12 +215,12 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
     class UpdateCharacterStatus extends AsyncTask<String, String, Boolean>{
         @Override
         protected Boolean doInBackground(String... params) {
-            String marvels_id = params[0];
+            long id = Long.valueOf(params[0]);
             String favorite = params[1];
 
             ContentValues values = new ContentValues(1);
             values.put(MarvelContract.CharacterEntry.COLUMN_FAVORITE, favorite);
-            int updatedRows = getActivity().getContentResolver().update(MarvelContract.CharacterEntry.buildCharacterUri(marvels_id), values, null, null);
+            int updatedRows = getActivity().getContentResolver().update(MarvelContract.CharacterEntry.buildCharacterUri(id), values, null, null);
 
             return updatedRows == 1;
         }
@@ -234,12 +242,12 @@ public class CharacterDetailFragment extends Fragment implements LoaderManager.L
 
         @Override
         protected Boolean doInBackground(String... params) {
-            String marvels_id = params[0];
+            long id = Long.valueOf(params[0]);
             String note = params[1];
 
             ContentValues values = new ContentValues(1);
             values.put(MarvelContract.CharacterEntry.COLUMN_NOTE, note);
-            int updatedRows = getActivity().getContentResolver().update(MarvelContract.CharacterEntry.buildCharacterUri(marvels_id), values, null, null);
+            int updatedRows = getActivity().getContentResolver().update(MarvelContract.CharacterEntry.buildCharacterUri(id), values, null, null);
 
             return updatedRows == 1;
         }

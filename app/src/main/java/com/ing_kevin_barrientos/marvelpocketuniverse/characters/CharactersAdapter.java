@@ -67,7 +67,7 @@ class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Character
         }
 
         void bind(Cursor item){
-            final String id = item.getString(CharacterListActivity.CHARACTER_MARVELS_ID);
+            final long id = item.getLong(CharacterListActivity._ID);
             String name = item.getString(CharacterListActivity.CHARACTER_NAME);
 
             this.nameTextView.setText(name);
@@ -87,6 +87,6 @@ class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Character
      * Listener to respond to interactions with the items.
      */
     interface OnClickListener{
-        void onItemClick(String id);
+        void onItemClick(long id);
     }
 }
